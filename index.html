@@ -64,10 +64,10 @@
 <div class="toast" id="toast">계좌번호가 클립보드에 복사되었습니다.</div>
 
 <script>
-  // [기본 계좌 설정]
+  // [기본 계좌 및 URL 설정]
   const DEFAULT_BANK = "우리은행";
   const DEFAULT_ACCOUNT = "1002 338 770066";
-  const NAVER_REMIT_URL = "https://pay.naver.com/remit/select?cancelUrl=https://pay.naver.com/paymoney/history?curl=https://home.pay.naver.com&from=paymoney&returnUrl=https://pay.naver.com/paymoney/history?curl=https://home.pay.naver.com";
+  const NAVER_REMIT_URL = "https://pay.naver.com/remit/qr/inflow?v=1&a=1002338770066&c=020&d=d7ac99f0b290a6e01dd6319879753753";
 
   let currentBank = DEFAULT_BANK;
   let currentAccount = DEFAULT_ACCOUNT;
