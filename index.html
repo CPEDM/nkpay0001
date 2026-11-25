@@ -7,41 +7,29 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif; }
     body { background-color: #f4f6f8; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
-    .card { background: #ffffff; width: 100%; max-width: 400px; border-radius: 20px; padding: 28px 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.06); text-align: center; }
+    .card { background: #ffffff; width: 100%; max-width: 400px; border-radius: 20px; padding: 30px 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.06); text-align: center; }
     .title { font-size: 18px; font-weight: 700; color: #191f28; margin-bottom: 6px; }
-    .subtitle { font-size: 13px; color: #6b7684; margin-bottom: 22px; }
+    .subtitle { font-size: 13px; color: #6b7684; margin-bottom: 24px; }
     
-    /* 계좌 정보 박스 (조회 모드) */
-    .account-box { position: relative; background: #f9fafb; border: 1px solid #e5e8eb; border-radius: 14px; padding: 20px 18px; margin-bottom: 24px; cursor: pointer; transition: background 0.2s; }
+    /* 계좌 정보 박스 */
+    .account-box { background: #f9fafb; border: 1px solid #e5e8eb; border-radius: 14px; padding: 22px 18px; margin-bottom: 24px; cursor: pointer; transition: background 0.2s; -webkit-tap-highlight-color: transparent; }
     .account-box:active { background: #f2f4f6; }
-    .edit-trigger { position: absolute; top: 12px; right: 12px; background: #ffffff; border: 1px solid #d1d6db; color: #4e5968; font-size: 11px; font-weight: 600; padding: 4px 8px; border-radius: 6px; cursor: pointer; }
-    .edit-trigger:hover { background: #f2f4f6; }
     
-    .bank-name { font-size: 15px; color: #4e5968; font-weight: 600; margin-bottom: 4px; }
-    .account-num { font-size: 21px; font-weight: 700; color: #191f28; letter-spacing: -0.3px; margin-bottom: 12px; word-break: keep-all; }
-    .copy-badge { display: inline-block; background: #e8f3ff; color: #1b64da; font-size: 12px; font-weight: 600; padding: 5px 12px; border-radius: 20px; }
-
-    /* 계좌 정보 수정 박스 (편집 모드) */
-    .edit-box { display: none; background: #f9fafb; border: 1px solid #3182f6; border-radius: 14px; padding: 18px; margin-bottom: 24px; text-align: left; }
-    .edit-box.active { display: block; }
-    .input-group { margin-bottom: 12px; }
-    .input-group label { display: block; font-size: 12px; font-weight: 600; color: #4e5968; margin-bottom: 5px; }
-    .input-control { width: 100%; height: 42px; padding: 0 12px; border: 1px solid #d1d6db; border-radius: 8px; font-size: 15px; color: #191f28; background: #fff; }
-    .input-control:focus { outline: none; border-color: #3182f6; }
-    .edit-actions { display: flex; gap: 8px; margin-top: 14px; }
-    .btn-sm { flex: 1; height: 38px; border-radius: 8px; font-size: 13px; font-weight: 600; border: none; cursor: pointer; }
-    .btn-save { background: #3182f6; color: #fff; }
-    .btn-cancel { background: #e5e8eb; color: #4e5968; }
-    .btn-reset { background: #fff; border: 1px solid #d1d6db; color: #6b7684; flex: 0.7; }
+    .bank-name { font-size: 15px; color: #4e5968; font-weight: 600; margin-bottom: 6px; }
+    .account-num { font-size: 22px; font-weight: 700; color: #191f28; letter-spacing: -0.3px; margin-bottom: 14px; word-break: keep-all; }
+    .copy-badge { display: inline-block; background: #e8f3ff; color: #1b64da; font-size: 12px; font-weight: 600; padding: 6px 14px; border-radius: 20px; }
 
     /* 송금 버튼 리스트 */
     .btn-group { display: flex; flex-direction: column; gap: 12px; }
-    .btn { display: flex; align-items: center; justify-content: center; width: 100%; height: 52px; border-radius: 12px; font-size: 16px; font-weight: 700; text-decoration: none; border: none; cursor: pointer; transition: transform 0.1s; }
+    .btn { display: flex; align-items: center; justify-content: center; width: 100%; height: 54px; border-radius: 12px; font-size: 16px; font-weight: 700; text-decoration: none; border: none; cursor: pointer; transition: transform 0.1s; -webkit-tap-highlight-color: transparent; }
     .btn:active { transform: scale(0.98); }
     
     .btn-toss { background-color: #0064FF; color: #ffffff; }
     .btn-kakao { background-color: #FEE500; color: #191919; }
     .btn-naver { background-color: #03C75A; color: #ffffff; }
+
+    /* 안내 문구 */
+    .guide-text { margin-top: 18px; font-size: 12px; color: #8b95a1; line-height: 1.5; }
 
     /* 토스트 알림 */
     .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(25, 31, 40, 0.92); color: #fff; padding: 12px 20px; border-radius: 30px; font-size: 13px; opacity: 0; transition: opacity 0.3s; pointer-events: none; white-space: nowrap; z-index: 100; }
@@ -54,63 +42,36 @@
   <div class="title">송금하실 앱을 선택해 주세요</div>
   <div class="subtitle">버튼을 누르면 계좌번호가 자동 복사됩니다</div>
 
-  <!-- 1. 조회 모드 박스 -->
-  <div class="account-box" id="viewBox" onclick="copyAccount(true)">
-    <button type="button" class="edit-trigger" onclick="toggleEdit(event, true)">수정</button>
+  <!-- 계좌 정보 박스 (수정 버튼 제거됨) -->
+  <div class="account-box" onclick="copyAccount(true)">
     <div class="bank-name" id="displayBank">우리은행</div>
     <div class="account-num" id="displayAccount">1002 338 770066</div>
     <span class="copy-badge" id="copyStatus">터치하여 계좌번호 복사</span>
   </div>
 
-  <!-- 2. 수정 모드 박스 -->
-  <div class="edit-box" id="editBox">
-    <div class="input-group">
-      <label for="inputBank">은행 이름</label>
-      <input type="text" id="inputBank" class="input-control" list="bankList" placeholder="은행명 입력 또는 선택">
-      <datalist id="bankList">
-        <option value="우리은행">
-        <option value="신한은행">
-        <option value="국민은행">
-        <option value="하나은행">
-        <option value="농협은행">
-        <option value="기업은행">
-        <option value="카카오뱅크">
-        <option value="토스뱅크">
-        <option value="케이뱅크">
-        <option value="새마을금고">
-        <option value="우체국">
-      </datalist>
-    </div>
-    <div class="input-group">
-      <label for="inputAccount">계좌번호</label>
-      <input type="text" id="inputAccount" class="input-control" inputmode="numeric" placeholder="계좌번호 입력">
-    </div>
-    <div class="edit-actions">
-      <button type="button" class="btn-sm btn-reset" onclick="resetAccount()">초기화</button>
-      <button type="button" class="btn-sm btn-cancel" onclick="toggleEdit(event, false)">취소</button>
-      <button type="button" class="btn-sm btn-save" onclick="saveAccount()">저장</button>
-    </div>
-  </div>
-
-  <!-- 3. 간편송금 버튼 영역 -->
+  <!-- 간편송금 버튼 영역 -->
   <div class="btn-group">
     <button type="button" class="btn btn-toss" onclick="openApp('toss')">토스로 송금하기</button>
     <button type="button" class="btn btn-kakao" onclick="openApp('kakao')">카카오페이로 송금하기</button>
     <button type="button" class="btn btn-naver" onclick="openApp('naver')">네이버페이로 송금하기</button>
+  </div>
+
+  <div class="guide-text">
+    앱이 열리면 복사된 계좌번호를 붙여넣기 해주세요.
   </div>
 </div>
 
 <div class="toast" id="toast">계좌번호가 클립보드에 복사되었습니다.</div>
 
 <script>
-  // [디폴트 설정값]
+  // [기본 계좌 설정]
   const DEFAULT_BANK = "우리은행";
   const DEFAULT_ACCOUNT = "1002 338 770066";
 
   let currentBank = DEFAULT_BANK;
   let currentAccount = DEFAULT_ACCOUNT;
 
-  // 초기화 및 데이터 로드 (우선순위: URL 파라미터 > 로컬스토리지 > 디폴트값)
+  // 페이지 로드 시 초기화 (URL 파라미터 우선 지원)
   window.addEventListener('DOMContentLoaded', () => {
     const params = new URLSearchParams(window.location.search);
     const paramBank = params.get('bank');
@@ -119,86 +80,14 @@
     if (paramBank && paramAcc) {
       currentBank = paramBank;
       currentAccount = paramAcc;
-    } else {
-      const savedBank = localStorage.getItem('remit_bank');
-      const savedAcc = localStorage.getItem('remit_account');
-      if (savedBank && savedAcc) {
-        currentBank = savedBank;
-        currentAccount = savedAcc;
-      }
     }
 
-    renderAccount();
-    copyAccount(false); // 진입 시 자동 복사 시도
-  });
-
-  // 화면 렌더링
-  function renderAccount() {
     document.getElementById('displayBank').innerText = currentBank;
     document.getElementById('displayAccount').innerText = currentAccount;
-    
-    // 복사 배지 상태 리셋
-    const badge = document.getElementById('copyStatus');
-    badge.innerText = "터치하여 계좌번호 복사";
-    badge.style.background = "#e8f3ff";
-    badge.style.color = "#1b64da";
-  }
 
-  // 수정 모드 전환
-  function toggleEdit(event, isEdit) {
-    if (event) event.stopPropagation(); // 부모 박스 클릭(복사) 이벤트 방지
-    
-    const viewBox = document.getElementById('viewBox');
-    const editBox = document.getElementById('editBox');
-
-    if (isEdit) {
-      document.getElementById('inputBank').value = currentBank;
-      document.getElementById('inputAccount').value = currentAccount;
-      viewBox.style.display = 'none';
-      editBox.classList.add('active');
-    } else {
-      editBox.classList.remove('active');
-      viewBox.style.display = 'block';
-    }
-  }
-
-  // 계좌 정보 저장
-  function saveAccount() {
-    const newBank = document.getElementById('inputBank').value.trim();
-    const newAccount = document.getElementById('inputAccount').value.trim();
-
-    if (!newBank || !newAccount) {
-      showToast("은행 이름과 계좌번호를 모두 입력해 주세요.");
-      return;
-    }
-
-    currentBank = newBank;
-    currentAccount = newAccount;
-
-    localStorage.setItem('remit_bank', currentBank);
-    localStorage.setItem('remit_account', currentAccount);
-
-    renderAccount();
-    toggleEdit(null, false);
-    copyAccount(true); // 저장과 동시에 새 계좌 복사
-  }
-
-  // 디폴트 값으로 초기화
-  function resetAccount() {
-    currentBank = DEFAULT_BANK;
-    currentAccount = DEFAULT_ACCOUNT;
-
-    localStorage.removeItem('remit_bank');
-    localStorage.removeItem('remit_account');
-
-    document.getElementById('inputBank').value = currentBank;
-    document.getElementById('inputAccount').value = currentAccount;
-
-    renderAccount();
-    toggleEdit(null, false);
-    copyAccount(true);
-    showToast("기본 계좌(우리은행)로 초기화되었습니다.");
-  }
+    // 진입 즉시 자동 복사 시도
+    copyAccount(false);
+  });
 
   // 클립보드 복사 함수
   async function copyAccount(showAlert = true) {
@@ -238,38 +127,41 @@
     setTimeout(() => toast.classList.remove('show'), 2500);
   }
 
-  // 간편송금 앱 딥링크 실행
+  // 간편송금 앱 실행
   function openApp(type) {
-    copyAccount(true); // 버튼 클릭 시점 확실한 재복사
+    // 버튼 터치 시점에 확실히 재복사
+    copyAccount(true);
 
-    // 딥링크 전달용 순수 숫자 계좌번호 (공백 및 하이픈 제거)
     const cleanAccount = currentAccount.replace(/[\s-]/g, '');
-    let schemeUrl = "";
-    let fallbackUrl = "";
-
-    if (type === 'toss') {
-      schemeUrl = `supertoss://send?bank=${encodeURIComponent(currentBank)}&accountNo=${cleanAccount}`;
-      fallbackUrl = "https://toss.im";
-    } 
-    else if (type === 'kakao') {
-      schemeUrl = "kakaotalk://kakaopay/money/to/bank";
-      fallbackUrl = "https://www.kakaopay.com";
-    } 
-    else if (type === 'naver') {
-      schemeUrl = "naversearchapp://inappbrowser?url=" + encodeURIComponent("https://new-m.pay.naver.com/remit/home");
-      fallbackUrl = "https://new-m.pay.naver.com/remit/home";
-    }
 
     setTimeout(() => {
-      const clickedAt = Date.now();
-      window.location.href = schemeUrl;
+      if (type === 'toss') {
+        // 토스: 은행 및 계좌번호 자동 입력 딥링크
+        const schemeUrl = `supertoss://send?bank=${encodeURIComponent(currentBank)}&accountNo=${cleanAccount}`;
+        launchScheme(schemeUrl, "https://toss.im");
+      } 
+      else if (type === 'kakao') {
+        // 카카오페이: 카카오톡 송금 화면 딥링크
+        const schemeUrl = "kakaotalk://kakaopay/money/to/bank";
+        launchScheme(schemeUrl, "https://www.kakaopay.com");
+      } 
+      else if (type === 'naver') {
+        // 네이버페이: 유니버셜 링크(모바일 웹/앱 자동 전환) 방식으로 안정적 연결
+        window.location.href = "https://m.pay.naver.com/o/remit";
+      }
+    }, 250);
+  }
 
-      setTimeout(() => {
-        if (Date.now() - clickedAt < 2000 && !document.hidden) {
-          window.location.href = fallbackUrl;
-        }
-      }, 1500);
-    }, 300);
+  // 커스텀 스킴 호출 및 미설치 시 폴백 처리
+  function launchScheme(schemeUrl, fallbackUrl) {
+    const clickedAt = Date.now();
+    window.location.href = schemeUrl;
+
+    setTimeout(() => {
+      if (Date.now() - clickedAt < 2000 && !document.hidden) {
+        window.location.href = fallbackUrl;
+      }
+    }, 1500);
   }
 </script>
 
